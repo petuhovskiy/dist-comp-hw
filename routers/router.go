@@ -45,7 +45,7 @@ func CreateRouter(productsV1 *handlers.Products) chi.Router {
 	})
 
 	r.Get("/swagger/*", httpSwagger.Handler(
-		httpSwagger.URL("/swagger/doc.json"), //The url pointing to API definition"
+		httpSwagger.URL("/swagger/doc.json"), // The url pointing to API definition"
 	))
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {

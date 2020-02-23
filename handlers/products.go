@@ -156,11 +156,11 @@ func (h *Products) ParseProductID(next http.Handler) http.Handler {
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), "productID", productID)
+		ctx := context.WithValue(r.Context(), keyProductID, productID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
 func (h *Products) productID(r *http.Request) uint {
-	return r.Context().Value("productID").(uint)
+	return r.Context().Value(keyProductID).(uint)
 }

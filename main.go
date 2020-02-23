@@ -30,13 +30,13 @@ func main() {
 
 	conf, err := config.EnvConfig()
 	if err != nil {
-		log.Fatal("failed to read config, err=", err)
+		log.Panic("failed to read config, err=", err)
 	}
 
 	// db
 	conn, err := pgx.Connect(context.Background(), conf.PostgresAddr)
 	if err != nil {
-		log.Fatal("failed to connect to postgres, err=", err)
+		log.Panic("failed to connect to postgres, err=", err)
 	}
 	defer conn.Close(context.Background())
 
@@ -46,7 +46,7 @@ func main() {
 	// applying migrations
 	err = productsRepo.Migrate()
 	if err != nil {
-		log.Fatal("failed to migrate products, err=", err)
+		log.Panic("failed to migrate products, err=", err)
 	}
 
 	// initializing services
@@ -58,5 +58,5 @@ func main() {
 
 	log.Println("Serving at http://localhost" + conf.BindAddr)
 	err = http.ListenAndServe(conf.BindAddr, handler)
-	log.Fatal(err)
+	log.Println(err)
 }

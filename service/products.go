@@ -36,7 +36,7 @@ func (s *Products) Create(req modelapi.ProductReq) (modelapi.Product, error) {
 		return modelapi.Product{}, err
 	}
 
-	return productDbToApi(p), nil
+	return productDbToAPI(p), nil
 }
 
 func (s *Products) Delete(id uint) error {
@@ -51,7 +51,7 @@ func (s *Products) ListPage(limit, offset uint) ([]modelapi.Product, error) {
 
 	var resp []modelapi.Product
 	for _, p := range list {
-		resp = append(resp, productDbToApi(p))
+		resp = append(resp, productDbToAPI(p))
 	}
 
 	return resp, nil
@@ -63,7 +63,7 @@ func (s *Products) Get(id uint) (modelapi.Product, error) {
 		return modelapi.Product{}, err
 	}
 
-	return productDbToApi(p), nil
+	return productDbToAPI(p), nil
 }
 
 func (s *Products) Update(id uint, req modelapi.ProductReq) (modelapi.Product, error) {
@@ -79,10 +79,10 @@ func (s *Products) Update(id uint, req modelapi.ProductReq) (modelapi.Product, e
 		return modelapi.Product{}, err
 	}
 
-	return productDbToApi(resp), nil
+	return productDbToAPI(resp), nil
 }
 
-func productDbToApi(p modeldb.Product) modelapi.Product {
+func productDbToAPI(p modeldb.Product) modelapi.Product {
 	return modelapi.Product{
 		ID:       p.ID,
 		Name:     p.Name,
