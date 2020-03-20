@@ -1,4 +1,4 @@
-module github.com/petuhovskiy/dist-comp-hw
+module app
 
 go 1.13
 

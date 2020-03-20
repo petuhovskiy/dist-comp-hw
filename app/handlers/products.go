@@ -9,8 +9,8 @@ import (
 
 	"github.com/go-chi/render"
 
-	"github.com/petuhovskiy/dist-comp-hw/modelapi"
-	"github.com/petuhovskiy/dist-comp-hw/service"
+	"app/modelapi"
+	"app/service"
 )
 
 type Products struct {

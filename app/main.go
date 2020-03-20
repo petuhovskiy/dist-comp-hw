@@ -8,11 +8,11 @@ import (
 
 	"github.com/jackc/pgx/v4"
 
-	"github.com/petuhovskiy/dist-comp-hw/config"
-	"github.com/petuhovskiy/dist-comp-hw/handlers"
-	"github.com/petuhovskiy/dist-comp-hw/repos/psql"
-	"github.com/petuhovskiy/dist-comp-hw/routers"
-	"github.com/petuhovskiy/dist-comp-hw/service"
+	"app/config"
+	"app/handlers"
+	"app/repos/psql"
+	"app/routers"
+	"app/service"
 )
 
 // @title Internet Shop API

@@ -1,8 +1,8 @@
 package service
 
 import (
-	"github.com/petuhovskiy/dist-comp-hw/modelapi"
-	"github.com/petuhovskiy/dist-comp-hw/modeldb"
+	"app/modelapi"
+	"app/modeldb"
 )
 
 type productsRepo interface {
