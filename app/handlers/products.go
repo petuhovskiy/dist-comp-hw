@@ -30,6 +30,7 @@ func NewProductsV1(p *service.Products) *Products {
 // @Param product body modelapi.ProductReq true "Product to create"
 // @Success 200 {object} modelapi.Product
 // @Router /v1/product [post]
+// @Security ApiKeyAuth
 func (h *Products) Create(w http.ResponseWriter, r *http.Request) {
 	var data modelapi.ProductReq
 	if err := render.Decode(r, &data); err != nil {
@@ -54,6 +55,7 @@ func (h *Products) Create(w http.ResponseWriter, r *http.Request) {
 // @Param id path int true "Product ID"
 // @Success 200
 // @Router /v1/product/{id} [delete]
+// @Security ApiKeyAuth
 func (h *Products) Delete(w http.ResponseWriter, r *http.Request) {
 	productID := h.productID(r)
 
@@ -75,6 +77,7 @@ func (h *Products) Delete(w http.ResponseWriter, r *http.Request) {
 // @Param limit query int false "Page limit"
 // @Success 200 {object} modelapi.Product
 // @Router /v1/product/list [get]
+// @Security ApiKeyAuth
 func (h *Products) List(w http.ResponseWriter, r *http.Request) {
 	limit, offset, err := parseLimitOffset(r)
 	if err != nil {
@@ -104,6 +107,7 @@ func (h *Products) List(w http.ResponseWriter, r *http.Request) {
 // @Param id path int true "Product ID"
 // @Success 200 {object} modelapi.Product
 // @Router /v1/product/{id} [get]
+// @Security ApiKeyAuth
 func (h *Products) Get(w http.ResponseWriter, r *http.Request) {
 	productID := h.productID(r)
 
@@ -125,6 +129,7 @@ func (h *Products) Get(w http.ResponseWriter, r *http.Request) {
 // @Param product body modelapi.ProductReq true "Product to put"
 // @Success 200 {object} modelapi.Product
 // @Router /v1/product/{id} [put]
+// @Security ApiKeyAuth
 func (h *Products) Update(w http.ResponseWriter, r *http.Request) {
 	productID := h.productID(r)
 

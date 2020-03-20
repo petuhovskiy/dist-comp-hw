@@ -2,6 +2,7 @@
 package main
 
 import (
+	"app/auth"
 	"context"
 	"log"
 	"net/http"
@@ -18,6 +19,10 @@ import (
 // @title Internet Shop API
 // @version 1.0
 // @description This is sample internet shop, made as dist-comp homework.
+
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 
 // @contact.name Arthur Petukhovsky
 // @contact.url https://t.me/petuhovskiy
@@ -40,6 +45,9 @@ func main() {
 	}
 	defer conn.Close(context.Background())
 
+	// clients
+	authCli := auth.NewClient(conf.AuthAddr)
+
 	// repositories
 	productsRepo := psql.NewProducts(conn)
 
@@ -54,7 +62,8 @@ func main() {
 
 	// initializing handlers
 	productsV1 := handlers.NewProductsV1(productsService)
-	handler := routers.CreateRouter(productsV1)
+	authMiddleware := handlers.AuthMiddleware(authCli)
+	handler := routers.CreateRouter(productsV1, authMiddleware)
 
 	log.Println("Serving at http://localhost" + conf.BindAddr)
 	err = http.ListenAndServe(conf.BindAddr, handler)

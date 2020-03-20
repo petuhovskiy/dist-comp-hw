@@ -56,6 +56,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/modelapi.Product'
+      security:
+      - ApiKeyAuth: []
       summary: Create product
       tags:
       - products
@@ -71,6 +73,8 @@ paths:
       - application/json
       responses:
         "200": {}
+      security:
+      - ApiKeyAuth: []
       summary: Delete product
       tags:
       - products
@@ -88,6 +92,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/modelapi.Product'
+      security:
+      - ApiKeyAuth: []
       summary: Get product by id
       tags:
       - products
@@ -113,6 +119,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/modelapi.Product'
+      security:
+      - ApiKeyAuth: []
       summary: Edit product
       tags:
       - products
@@ -135,7 +143,14 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/modelapi.Product'
+      security:
+      - ApiKeyAuth: []
       summary: Show a list of products (plus for pagination)
       tags:
       - products
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
