@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Docker CI
 
 on: [push]
 
@@ -10,5 +10,5 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag dist-comp-hw:$(date +%s)
+      - name: Build the Docker compose project
+        run: docker-compose build
