@@ -9,13 +9,36 @@ services:
     restart: unless-stopped
 
   app:
-    build: .
+    build: ./app
     ports:
       - 8080:8080
     environment:
       BIND_ADDR: ":8080"
       POSTGRES_ADDR: "host=db port=5432 user=postgres password=DB_PASSWORD dbname=postgres sslmode=disable"
+      AUTH_ADDR: "http://auth:8081"
+    restart: unless-stopped
+
+  authdb:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: DB_PASSWORD_SECURE
+    volumes:
+      - "data-auth:/var/lib/postgresql/data"
+    restart: unless-stopped
+
+  auth:
+    build: ./auth
+    ports:
+      - 8081:8081
+    environment:
+      BIND_ADDR: ":8081"
+      POSTGRES_ADDR: "host=authdb port=5432 user=postgres password=DB_PASSWORD_SECURE dbname=postgres sslmode=disable"
+      ACCESS_TOKEN_EXPR: "3m"
+      REFRESH_TOKEN_EXPR: "10m"
+      TOKEN_LENGTH: "32"
+      JWT_SECRET: "my_awesome_secret"
     restart: unless-stopped
 
 volumes:
   data-app:
+  data-auth:
