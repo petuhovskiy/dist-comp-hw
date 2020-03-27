@@ -10,6 +10,7 @@ type productsRepo interface {
 	Get(id uint) (modeldb.Product, error)
 	ListPage(limit, offset uint) ([]modeldb.Product, error)
 	Delete(id uint) error
+	CountAll() (uint, error)
 }
 
 type Products struct {
@@ -43,18 +44,26 @@ func (s *Products) Delete(id uint) error {
 	return s.repo.Delete(id)
 }
 
-func (s *Products) ListPage(limit, offset uint) ([]modelapi.Product, error) {
-	list, err := s.repo.ListPage(limit, offset)
+func (s *Products) ListPage(limit, offset uint) (modelapi.ProductList, error) {
+	page, err := s.repo.ListPage(limit, offset)
 	if err != nil {
-		return nil, err
+		return modelapi.ProductList{}, err
 	}
 
-	var resp []modelapi.Product
-	for _, p := range list {
-		resp = append(resp, productDbToAPI(p))
+	count, err := s.repo.CountAll()
+	if err != nil {
+		return modelapi.ProductList{}, err
 	}
 
-	return resp, nil
+	var list []modelapi.Product
+	for _, p := range page {
+		list = append(list, productDbToAPI(p))
+	}
+
+	return modelapi.ProductList{
+		Count: count,
+		List: list,
+	}, nil
 }
 
 func (s *Products) Get(id uint) (modelapi.Product, error) {

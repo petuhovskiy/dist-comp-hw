@@ -26,3 +26,12 @@ type ProductReq struct {
 	// Word category of the product
 	Category string `json:"category"`
 }
+
+// ProductList
+type ProductList struct {
+	// Total count of products
+	Count uint      `json:"count"`
+
+	// Products on selected page
+	List  []Product `json:"list"`
+}
