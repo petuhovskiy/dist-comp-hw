@@ -75,9 +75,8 @@ func (h *Products) Delete(w http.ResponseWriter, r *http.Request) {
 // @Produce  json
 // @Param offset query int false "Page offset"
 // @Param limit query int false "Page limit"
-// @Success 200 {object} modelapi.Product
+// @Success 200 {object} modelapi.ProductList
 // @Router /v1/product/list [get]
-// @Security ApiKeyAuth
 func (h *Products) List(w http.ResponseWriter, r *http.Request) {
 	limit, offset, err := parseLimitOffset(r)
 	if err != nil {
@@ -94,8 +93,8 @@ func (h *Products) List(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// fix null result
-	if list == nil {
-		list = []modelapi.Product{}
+	if list.List == nil {
+		list.List = []modelapi.Product{}
 	}
 
 	render.Respond(w, r, list)
@@ -107,7 +106,6 @@ func (h *Products) List(w http.ResponseWriter, r *http.Request) {
 // @Param id path int true "Product ID"
 // @Success 200 {object} modelapi.Product
 // @Router /v1/product/{id} [get]
-// @Security ApiKeyAuth
 func (h *Products) Get(w http.ResponseWriter, r *http.Request) {
 	productID := h.productID(r)
 

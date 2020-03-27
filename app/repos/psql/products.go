@@ -106,3 +106,14 @@ func (r *Products) Delete(id uint) error {
 
 	return err
 }
+
+func (r *Products) CountAll() (uint, error) {
+	var count uint
+
+	err := r.conn.QueryRow(
+		context.Background(),
+		`SELECT count(*) FROM products`,
+	).Scan(&count)
+
+	return count, err
+}

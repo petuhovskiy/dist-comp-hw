@@ -15,6 +15,17 @@ definitions:
         description: Name of the product
         type: string
     type: object
+  modelapi.ProductList:
+    properties:
+      count:
+        description: Total count of products
+        type: integer
+      list:
+        description: Products on selected page
+        items:
+          $ref: '#/definitions/modelapi.Product'
+        type: array
+    type: object
   modelapi.ProductReq:
     properties:
       category:
@@ -92,8 +103,6 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/modelapi.Product'
-      security:
-      - ApiKeyAuth: []
       summary: Get product by id
       tags:
       - products
@@ -142,9 +151,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/modelapi.Product'
-      security:
-      - ApiKeyAuth: []
+            $ref: '#/definitions/modelapi.ProductList'
       summary: Show a list of products (plus for pagination)
       tags:
       - products
