@@ -1,12 +1,21 @@
 package config
 
-import "github.com/caarlos0/env"
+import "github.com/caarlos0/env/v6"
 
 type Config struct {
-	SmsHost   string `env:"SMS_HOST" envDefault:"https://sms.ru"`
-	SmsApiID  string `env:"SMS_API_ID"`
 	AmqpURL   string `env:"AMQP_URL" envDefault:"amqp://guest:guest@rabbit:5672/"`
 	QueueName string `env:"QUEUE_NAME" envDefault:"notifications"`
+
+	Email Email
+}
+
+type Email struct {
+	Host     string `env:"SMTP_HOST"`
+	Port     int    `env:"SMTP_PORT"`
+	Username string `env:"SMTP_USERNAME"`
+	Password string `env:"SMTP_PASSWORD"`
+
+	From string `env:"EMAIL_FROM"`
 }
 
 func EnvConfig() (*Config, error) {

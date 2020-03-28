@@ -1,4 +1,4 @@
-package auth
+package smsru
 
 import (
 	"github.com/davecgh/go-spew/spew"

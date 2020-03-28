@@ -1,4 +1,4 @@
-package auth
+package smsru
 
 import "net/http"
 

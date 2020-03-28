@@ -1,4 +1,4 @@
-package auth
+package smsru
 
 import (
 	"errors"
@@ -23,7 +23,6 @@ func (c *Client) Send(to string, msg string) (SendResponse, error) {
 	req := make(url.Values)
 	req.Add("to", to)
 	req.Add("msg", msg)
-	req.Add("json", "1")
 
 	var resp SendResponse
 	err := c.doPost("/sms/send", req, &resp)

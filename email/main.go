@@ -2,10 +2,10 @@ package main
 
 import (
 	"context"
+	"email/config"
+	"email/emailproc"
+	"email/sendmail"
 	log "github.com/sirupsen/logrus"
-	"sms/config"
-	"sms/smsproc"
-	"sms/smsru"
 )
 
 func main() {
@@ -14,8 +14,8 @@ func main() {
 		log.WithError(err).Fatal("failed to read config")
 	}
 
-	smsClient := smsru.NewClient(conf.SmsHost, conf.SmsApiID)
+	sender := sendmail.NewSender(conf.Email)
 
-	proc := smsproc.NewSmsProcessor(conf.AmqpURL, conf.QueueName, smsClient)
+	proc := emailproc.NewEmailProcessor(conf.AmqpURL, conf.QueueName, sender)
 	proc.Start(context.Background())
 }
