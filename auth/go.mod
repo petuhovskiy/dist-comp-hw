@@ -12,6 +12,8 @@ require (
 	github.com/go-openapi/swag v0.19.8 // indirect
 	github.com/jackc/pgx/v4 v4.5.0
 	github.com/mailru/easyjson v0.7.1 // indirect
+	github.com/sirupsen/logrus v1.4.2
+	github.com/streadway/amqp v0.0.0-20200108173154-1c71cc93ed71
 	github.com/swaggo/http-swagger v0.0.0-20200308142732-58ac5e232fba
 	github.com/swaggo/swag v1.6.5
 	golang.org/x/crypto v0.0.0-20200320181102-891825fb96df

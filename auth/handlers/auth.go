@@ -118,3 +118,22 @@ func (h *Auth) Validate(w http.ResponseWriter, r *http.Request) {
 
 	render.Respond(w, r, resp)
 }
+
+// @Summary Confirms user account phone or email.
+// @Tags auth
+// @Produce  json
+// @Param v query string true "Confirmation string"
+// @Success 200 {object} modelapi.ConfirmResponse
+// @Router /v1/confirm [get]
+func (h *Auth) Confirm(w http.ResponseWriter, r *http.Request) {
+	v := r.URL.Query().Get("v")
+
+	resp, err := h.auth.Confirm(v)
+	if err != nil {
+		log.Println("failed to confirm, err=", err)
+		render.Render(w, r, ErrInternal(err))
+		return
+	}
+
+	render.Respond(w, r, resp)
+}

@@ -1,5 +1,12 @@
 basePath: /
 definitions:
+  modelapi.ConfirmResponse:
+    properties:
+      message:
+        type: string
+      subject:
+        type: string
+    type: object
   modelapi.IssuedTokens:
     properties:
       access_token:
@@ -18,7 +25,7 @@ definitions:
     type: object
   modelapi.SigninRequest:
     properties:
-      email:
+      login:
         type: string
       password:
         type: string
@@ -29,11 +36,11 @@ definitions:
         type: string
       password:
         type: string
+      phone:
+        type: string
     type: object
   modelapi.SignupResponse:
     properties:
-      email:
-        type: string
       user_id:
         type: integer
     type: object
@@ -60,6 +67,24 @@ info:
   title: Auth API
   version: "1.0"
 paths:
+  /v1/confirm:
+    get:
+      parameters:
+      - description: Confirmation string
+        in: query
+        name: v
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/modelapi.ConfirmResponse'
+      summary: Confirms user account phone or email.
+      tags:
+      - auth
   /v1/refresh:
     post:
       consumes:

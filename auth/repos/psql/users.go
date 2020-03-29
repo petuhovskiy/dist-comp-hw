@@ -22,7 +22,8 @@ func (r *Users) Migrate() error {
 		`CREATE TABLE IF NOT EXISTS users(
 			id				serial PRIMARY KEY,
 			created_at  	timestamp DEFAULT current_timestamp NOT NULL,
-			email       	text UNIQUE NOT NULL,
+			email       	text UNIQUE,
+			phone       	text UNIQUE,
 			password_hash 	bytea NOT NULL
 		)`,
 	)
@@ -32,24 +33,24 @@ func (r *Users) Migrate() error {
 func (r *Users) Create(p modeldb.User) (modeldb.User, error) {
 	err := r.conn.QueryRow(
 		context.Background(),
-		`INSERT INTO users(email, password_hash) VALUES ($1, $2) RETURNING id, created_at`,
-		p.Email, p.PasswordHash,
+		`INSERT INTO users(email, phone, password_hash) VALUES ($1, $2, $3) RETURNING id, created_at`,
+		p.Email, p.Phone, p.PasswordHash,
 	).Scan(&p.ID, &p.CreatedAt)
 
 	return p, err
 }
 
-func (r *Users) FindByEmail(email string) (modeldb.User, error) {
+func (r *Users) FindByLogin(login string) (modeldb.User, error) {
 	var p modeldb.User
 
 	err := r.conn.QueryRow(
 		context.Background(),
 		`SELECT
-		id, created_at, email, password_hash
+		id, created_at, email, phone, password_hash
 		FROM users
-		WHERE email = $1`,
-		email,
-	).Scan(&p.ID, &p.CreatedAt, &p.Email, &p.PasswordHash)
+		WHERE email = $1 OR phone = $1`,
+		login,
+	).Scan(&p.ID, &p.CreatedAt, &p.Email, &p.Phone, &p.PasswordHash)
 
 	return p, err
 }
@@ -60,11 +61,35 @@ func (r *Users) FindByID(id uint) (modeldb.User, error) {
 	err := r.conn.QueryRow(
 		context.Background(),
 		`SELECT
-		id, created_at, email, password_hash
+		id, created_at, email, login, password_hash
 		FROM users
 		WHERE id = $1`,
 		id,
-	).Scan(&p.ID, &p.CreatedAt, &p.Email, &p.PasswordHash)
+	).Scan(&p.ID, &p.CreatedAt, &p.Email, &p.Phone, &p.PasswordHash)
 
 	return p, err
+}
+
+func (r *Users) UpdateEmail(id uint, email string) error {
+	_, err := r.conn.Exec(
+		context.Background(),
+		`UPDATE users
+		SET email = $2
+		WHERE id = $1`,
+		id,
+		email,
+	)
+	return err
+}
+
+func (r *Users) UpdatePhone(id uint, phone string) error {
+	_, err := r.conn.Exec(
+		context.Background(),
+		`UPDATE users
+		SET phone = $2
+		WHERE id = $1`,
+		id,
+		phone,
+	)
+	return err
 }

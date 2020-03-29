@@ -13,6 +13,11 @@ type Config struct {
 	RefreshTokenExpiration time.Duration `env:"REFRESH_TOKEN_EXPR" envDefault:"10m"`
 	TokenLength            uint          `env:"TOKEN_LENGTH" envDefault:"32"`
 	JWTSecret              string        `env:"JWT_SECRET"`
+
+	AmqpURL    string `env:"AMQP_URL" envDefault:"amqp://guest:guest@rabbit:5672/"`
+	QueueSms   string `env:"QUEUE_SMS" envDefault:"notifications.sms"`
+	QueueEmail string `env:"QUEUE_EMAIL" envDefault:"notifications.email"`
+	ConfirmUrl string `env:"CONFIRM_URL" envDefault:"http://localhost:8081/v1/confirm?v=%s"`
 }
 
 func EnvConfig() (*Config, error) {

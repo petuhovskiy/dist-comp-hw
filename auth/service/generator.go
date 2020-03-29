@@ -2,7 +2,13 @@ package service
 
 import (
 	"crypto/rand"
-	"encoding/base64"
+	"math/big"
+	"strings"
+)
+
+var (
+	lowercaseChars = "qwertyuiopasdfghjklzxcvbnm"
+	allChars = []rune(lowercaseChars + strings.ToUpper(lowercaseChars))
 )
 
 type Generator struct {
@@ -16,11 +22,18 @@ func NewGenerator(length uint) *Generator {
 }
 
 func (g *Generator) Generate() (string, error) {
-	b := make([]byte, g.length)
-	_, err := rand.Read(b)
-	if err != nil {
-		return "", err
+	res := make([]rune, g.length)
+
+	max := big.NewInt(int64(len(allChars)))
+
+	for i := range res {
+		num, err := rand.Int(rand.Reader, max)
+		if err != nil {
+			return "", err
+		}
+
+		res[i] = allChars[num.Int64()]
 	}
 
-	return base64.StdEncoding.EncodeToString(b), nil
+	return string(res), nil
 }
