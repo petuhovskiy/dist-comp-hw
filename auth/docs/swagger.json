@@ -14,6 +14,34 @@
     "host": "localhost:8081",
     "basePath": "/",
     "paths": {
+        "/v1/confirm": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Confirms user account phone or email.",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Confirmation string",
+                        "name": "v",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/modelapi.ConfirmResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/refresh": {
             "post": {
                 "consumes": [
@@ -148,6 +176,17 @@
         }
     },
     "definitions": {
+        "modelapi.ConfirmResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "subject": {
+                    "type": "string"
+                }
+            }
+        },
         "modelapi.IssuedTokens": {
             "type": "object",
             "properties": {
@@ -176,7 +215,7 @@
         "modelapi.SigninRequest": {
             "type": "object",
             "properties": {
-                "email": {
+                "login": {
                     "type": "string"
                 },
                 "password": {
@@ -192,15 +231,15 @@
                 },
                 "password": {
                     "type": "string"
+                },
+                "phone": {
+                    "type": "string"
                 }
             }
         },
         "modelapi.SignupResponse": {
             "type": "object",
             "properties": {
-                "email": {
-                    "type": "string"
-                },
                 "user_id": {
                     "type": "integer"
                 }

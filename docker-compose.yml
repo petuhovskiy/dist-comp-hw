@@ -16,6 +16,9 @@ services:
       BIND_ADDR: ":8080"
       POSTGRES_ADDR: "host=db port=5432 user=postgres password=DB_PASSWORD dbname=postgres sslmode=disable"
       AUTH_ADDR: "http://auth:8081"
+    depends_on:
+      - db
+      - auth
     restart: unless-stopped
 
   authdb:
@@ -37,6 +40,38 @@ services:
       REFRESH_TOKEN_EXPR: "10m"
       TOKEN_LENGTH: "32"
       JWT_SECRET: "my_awesome_secret"
+    depends_on:
+      - authdb
+    restart: unless-stopped
+
+  sms:
+    build: ./sms
+    environment:
+      SMS_HOST: "https://sms.ru"
+      SMS_API_ID: ${SMS_API_ID}
+      AMQP_URL: "amqp://guest:guest@rabbit:5672/"
+      QUEUE_NAME: "notifications.sms"
+    depends_on:
+      - rabbit
+
+  email:
+    build: ./email
+    environment:
+      AMQP_URL: "amqp://guest:guest@rabbit:5672/"
+      QUEUE_NAME: "notifications.email"
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USERNAME: ${SMTP_USERNAME}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      EMAIL_FROM: ${EMAIL_FROM}
+    depends_on:
+      - rabbit
+
+  rabbit:
+    image: rabbitmq:3-management
+    ports:
+      - 5672:5672
+      - 15672:15672
     restart: unless-stopped
 
 volumes:

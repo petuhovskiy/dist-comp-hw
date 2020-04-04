@@ -44,6 +44,7 @@ func main() {
 	// repositories
 	usersRepo := psql.NewUsers(conn)
 	refreshRepo := psql.NewRefreshTokens(conn)
+	confirmRepo := psql.NewConfirm(conn)
 
 	// applying migrations
 	err = usersRepo.Migrate()
@@ -54,6 +55,18 @@ func main() {
 	if err != nil {
 		log.Panic("failed to migrate refresh tokens repo, err=", err)
 	}
+	err = confirmRepo.Migrate()
+	if err != nil {
+		log.Panic("failed to migrate confirm repo, err=", err)
+	}
+
+	// generators
+	jwtIDGenerator := service.NewGenerator(conf.TokenLength)
+	refreshGenerator := service.NewGenerator(conf.TokenLength)
+	confirmGenerator := service.NewGenerator(conf.TokenLength)
+
+	// clients
+	notificator := service.NewNotificator(conf.AmqpURL, conf.QueueSms, conf.QueueEmail)
 
 	// initializing services
 	jwtSigner, err := jwt.NewHS256([]byte(conf.JWTSecret))
@@ -61,10 +74,17 @@ func main() {
 		log.Panic("failed to init jwt signer, err=", err)
 	}
 	jwtBuilder := jwt.NewTokenBuilder(jwtSigner)
-	jwtIDGenerator := service.NewGenerator(conf.TokenLength)
 	jwtService := service.NewJWT(jwtSigner, jwtBuilder, jwtIDGenerator)
-	refreshGenerator := service.NewGenerator(conf.TokenLength)
-	authService := service.NewAuth(refreshGenerator, refreshRepo, usersRepo, jwtService, conf)
+	authService := service.NewAuth(
+		refreshGenerator,
+		refreshRepo,
+		usersRepo,
+		confirmGenerator,
+		confirmRepo,
+		notificator,
+		jwtService,
+		conf,
+	)
 
 	// initializing handlers
 	authV1 := handlers.NewAuthV1(authService)

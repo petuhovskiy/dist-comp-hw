@@ -29,6 +29,9 @@ func CreateRouter(authV1 *handlers.Auth) chi.Router {
 		r.Post("/signin", authV1.Signin)
 		r.Post("/refresh", authV1.Refresh)
 		r.Post("/validate", authV1.Validate)
+
+		// not a rest, handles user confirmation links
+		r.Get("/confirm", authV1.Confirm)
 	})
 
 	log.Println("Attached swagger ui at /swagger")
