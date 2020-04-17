@@ -3,6 +3,7 @@ package main
 
 import (
 	"app/auth"
+	"app/batchimport"
 	"context"
 	"log"
 	"net/http"
@@ -64,6 +65,9 @@ func main() {
 	productsV1 := handlers.NewProductsV1(productsService)
 	authMiddleware := handlers.AuthMiddleware(authCli)
 	handler := routers.CreateRouter(productsV1, authMiddleware)
+
+	batchImport := batchimport.NewImportWatcher(conf.AmqpURL, conf.QueueImport, productsRepo)
+	go batchImport.Start(context.Background())
 
 	log.Println("Serving at http://localhost" + conf.BindAddr)
 	err = http.ListenAndServe(conf.BindAddr, handler)

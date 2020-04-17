@@ -19,6 +19,7 @@ services:
     depends_on:
       - db
       - auth
+      - rabbit
     restart: unless-stopped
 
   authdb:
@@ -67,13 +68,26 @@ services:
     depends_on:
       - rabbit
 
+  product-import:
+    build: ./product-import
+    ports:
+      - 8082:8082
+    environment:
+      BIND_ADDR: ":8082"
+    depends_on:
+      - rabbit
+    restart: unless-stopped
+
   rabbit:
     image: rabbitmq:3-management
     ports:
       - 5672:5672
       - 15672:15672
+    volumes:
+      - "data-rabbit:/var/lib/rabbitmq"
     restart: unless-stopped
 
 volumes:
   data-app:
   data-auth:
+  data-rabbit:
