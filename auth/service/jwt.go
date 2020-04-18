@@ -15,7 +15,11 @@ const (
 
 type Claims struct {
 	jwt.StandardClaims
-	Role pb.AuthRole
+	Role pb.AuthRole `json:"role"`
+}
+
+func (u *Claims) MarshalBinary() ([]byte, error) {
+	return json.Marshal(u)
 }
 
 type JWT struct {

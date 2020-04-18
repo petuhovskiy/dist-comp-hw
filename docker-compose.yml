@@ -9,7 +9,11 @@ services:
     restart: unless-stopped
 
   app:
-    build: ./app
+    build:
+      context: ./
+      dockerfile: ./Dockerfile-std
+      args:
+        MOD_NAME: "app"
     ports:
       - 8080:8080
     environment:
@@ -41,8 +45,8 @@ services:
     environment:
       BIND_ADDR: ":8081"
       POSTGRES_ADDR: "host=authdb port=5432 user=postgres password=DB_PASSWORD_SECURE dbname=postgres sslmode=disable"
-      ACCESS_TOKEN_EXPR: "3m"
-      REFRESH_TOKEN_EXPR: "10m"
+      ACCESS_TOKEN_EXPR: "10m"
+      REFRESH_TOKEN_EXPR: "60m"
       TOKEN_LENGTH: "32"
       JWT_SECRET: "my_awesome_secret"
     depends_on:
@@ -50,7 +54,11 @@ services:
     restart: unless-stopped
 
   sms:
-    build: ./sms
+    build:
+      context: ./
+      dockerfile: ./Dockerfile-std
+      args:
+        MOD_NAME: "sms"
     environment:
       SMS_HOST: "https://sms.ru"
       SMS_API_ID: ${SMS_API_ID}
@@ -60,7 +68,11 @@ services:
       - rabbit
 
   email:
-    build: ./email
+    build:
+      context: ./
+      dockerfile: ./Dockerfile-std
+      args:
+        MOD_NAME: "email"
     environment:
       AMQP_URL: "amqp://guest:guest@rabbit:5672/"
       QUEUE_NAME: "notifications.email"
@@ -73,7 +85,11 @@ services:
       - rabbit
 
   product-import:
-    build: ./product-import
+    build:
+      context: ./
+      dockerfile: ./Dockerfile-std
+      args:
+        MOD_NAME: "product-import"
     ports:
       - 8082:8082
     environment:

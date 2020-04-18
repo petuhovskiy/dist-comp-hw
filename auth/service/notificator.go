@@ -2,10 +2,10 @@ package service
 
 import (
 	"auth/modeldb"
-	"auth/modelq"
-	"auth/qsession"
 	"encoding/json"
 	"github.com/streadway/amqp"
+	modelq2 "lib/modelq"
+	"lib/qsession"
 )
 
 type Notificator struct {
@@ -29,7 +29,7 @@ func (n *Notificator) Notify(t modeldb.ConfirmType, recipient string, content st
 
 	switch t {
 	case modeldb.ConfirmSms:
-		obj = modelq.Notification{
+		obj = modelq2.Notification{
 			Type:      "sms",
 			Recipient: recipient,
 			Content:   content,
@@ -37,7 +37,7 @@ func (n *Notificator) Notify(t modeldb.ConfirmType, recipient string, content st
 		queue = n.sms
 
 	case modeldb.ConfirmEmail:
-		obj = modelq.Notification{
+		obj = modelq2.Notification{
 			Type:      "email",
 			Recipient: recipient,
 			Content:   content,

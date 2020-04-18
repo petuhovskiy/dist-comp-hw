@@ -2,12 +2,12 @@ package batchimport
 
 import (
 	"app/modeldb"
-	"app/modelq"
 	"app/repos/psql"
 	"context"
 	"encoding/json"
 	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
+	modelq2 "lib/modelq"
 	"time"
 )
 
@@ -68,7 +68,7 @@ func (p *ImportWatcher) connectConsume(ctx context.Context) error {
 		log.WithField("queueName", p.queueName).Info("Accepting messages")
 
 		for msg := range notifyCh {
-			var message modelq.ProductImport
+			var message modelq2.ProductImport
 
 			err := json.Unmarshal(msg.Body, &message)
 			if err != nil {
@@ -127,7 +127,7 @@ func (p *ImportWatcher) consume(ch *amqp.Channel, queueName string) (<-chan amqp
 	return msgs, nil
 }
 
-func (p *ImportWatcher) process(msg modelq.ProductImport) error {
+func (p *ImportWatcher) process(msg modelq2.ProductImport) error {
 	var products []modeldb.Product
 	for _, prod := range msg.Products {
 		products = append(products, modeldb.Product{

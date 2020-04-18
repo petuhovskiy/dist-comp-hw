@@ -77,6 +77,7 @@ func (h *Products) Delete(w http.ResponseWriter, r *http.Request) {
 // @Param limit query int false "Page limit"
 // @Success 200 {object} modelapi.ProductList
 // @Router /v1/product/list [get]
+// @Security ApiKeyAuth
 func (h *Products) List(w http.ResponseWriter, r *http.Request) {
 	limit, offset, err := parseLimitOffset(r)
 	if err != nil {
@@ -106,6 +107,7 @@ func (h *Products) List(w http.ResponseWriter, r *http.Request) {
 // @Param id path int true "Product ID"
 // @Success 200 {object} modelapi.Product
 // @Router /v1/product/{id} [get]
+// @Security ApiKeyAuth
 func (h *Products) Get(w http.ResponseWriter, r *http.Request) {
 	productID := h.productID(r)
 

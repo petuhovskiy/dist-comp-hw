@@ -2,6 +2,8 @@ package routers
 
 import (
 	"fmt"
+	"lib/httputil"
+	"lib/pb"
 	"log"
 	"net/http"
 
@@ -25,15 +27,16 @@ func CreateRouter(productsV1 *handlers.Products, auth func(http.Handler) http.Ha
 	r.Use(render.SetContentType(render.ContentTypeJSON))
 
 	r.Route("/v1", func(r chi.Router) {
+		r.Use(auth)
 		r.Route("/product", func(r chi.Router) {
-			r.With(auth).Post("/", productsV1.Create)
+			r.With(httputil.RequireRole(pb.AuthRole_ADMIN)).Post("/", productsV1.Create)
 			r.Get("/list", productsV1.List)
 
 			r.Route("/{productID}", func(r chi.Router) {
 				r.Use(productsV1.ParseProductID)
 				r.Get("/", productsV1.Get)
-				r.With(auth).Put("/", productsV1.Update)
-				r.With(auth).Delete("/", productsV1.Delete)
+				r.With(httputil.RequireRole(pb.AuthRole_ADMIN)).Put("/", productsV1.Update)
+				r.With(httputil.RequireRole(pb.AuthRole_ADMIN)).Delete("/", productsV1.Delete)
 			})
 		})
 	})

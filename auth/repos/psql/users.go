@@ -4,6 +4,7 @@ import (
 	"auth/modeldb"
 	"context"
 	"github.com/jackc/pgx/v4"
+	"lib/pb"
 )
 
 type Users struct {
@@ -91,6 +92,18 @@ func (r *Users) UpdatePhone(id uint, phone string) error {
 		WHERE id = $1`,
 		id,
 		phone,
+	)
+	return err
+}
+
+func (r *Users) UpdateRole(id uint, role pb.AuthRole) error {
+	_, err := r.conn.Exec(
+		context.Background(),
+		`UPDATE users
+		SET role = $2
+		WHERE id = $1`,
+		id,
+		role,
 	)
 	return err
 }

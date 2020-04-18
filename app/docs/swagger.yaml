@@ -103,6 +103,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/modelapi.Product'
+      security:
+      - ApiKeyAuth: []
       summary: Get product by id
       tags:
       - products
@@ -152,6 +154,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/modelapi.ProductList'
+      security:
+      - ApiKeyAuth: []
       summary: Show a list of products (plus for pagination)
       tags:
       - products

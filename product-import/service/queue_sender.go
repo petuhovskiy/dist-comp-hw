@@ -3,8 +3,8 @@ package service
 import (
 	"encoding/json"
 	"github.com/streadway/amqp"
-	"product-import/modelq"
-	"product-import/qsession"
+	modelq2 "lib/modelq"
+	"lib/qsession"
 )
 
 type QueueSender struct {
@@ -19,7 +19,7 @@ func NewQueueSender(amqpURL string, queue string) *QueueSender {
 	}
 }
 
-func (n *QueueSender) Send(t modelq.ProductImport) error {
+func (n *QueueSender) Send(t modelq2.ProductImport) error {
 	body, err := json.Marshal(t)
 	if err != nil {
 		return err

@@ -6,6 +6,7 @@ import (
 
 type Config struct {
 	BindAddr string `env:"BIND_ADDR" envDefault:":8082"`
+	AuthGrpc string `env:"AUTH_GRPC" envDefault:"auth:9090"`
 
 	AmqpURL     string `env:"AMQP_URL" envDefault:"amqp://guest:guest@rabbit:5672/"`
 	QueueImport string `env:"QUEUE_IMPORT" envDefault:"products.import"`

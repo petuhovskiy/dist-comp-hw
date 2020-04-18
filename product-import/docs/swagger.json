@@ -16,6 +16,11 @@
     "paths": {
         "/v1/import": {
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "consumes": [
                     "multipart/form-data"
                 ],
@@ -39,6 +44,13 @@
                     "200": {}
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }

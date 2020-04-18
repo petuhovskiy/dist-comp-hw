@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"io"
+	"lib/httputil"
+	modelq2 "lib/modelq"
 	"net/http"
 	"product-import/importtool"
-	"product-import/modelq"
 	"product-import/service"
 	"strconv"
 
@@ -31,6 +32,7 @@ func NewImport(sender *service.QueueSender) *Import {
 // @Param file formData file true "File with data"
 // @Success 200
 // @Router /v1/import [post]
+// @Security ApiKeyAuth
 func (h *Import) Import(w http.ResponseWriter, r *http.Request) {
 	writer := csv.NewWriter(w)
 	_ = writer.Write([]string{"total", "ok", "errors", "batch_error"})
@@ -38,34 +40,34 @@ func (h *Import) Import(w http.ResponseWriter, r *http.Request) {
 
 	mpart, err := r.MultipartReader()
 	if err != nil {
-		render.Render(w, r, ErrInternal(err))
+		render.Render(w, r, httputil.ErrInternal(err))
 		return
 	}
 
 	part, err := mpart.NextPart()
 	if err != nil {
-		render.Render(w, r, ErrInternal(err))
+		render.Render(w, r, httputil.ErrInternal(err))
 		return
 	}
 	defer part.Close()
 
 	if part.FormName() != "file" {
 		err := fmt.Errorf("unexpected %s form", part.FormName())
-		render.Render(w, r, ErrInternal(err))
+		render.Render(w, r, httputil.ErrInternal(err))
 		return
 	}
 
 	const batchSize = 1024
 	reader, err := importtool.NewCsvReader(part)
 	if err != nil {
-		render.Render(w, r, ErrInternal(err))
+		render.Render(w, r, httputil.ErrInternal(err))
 		return
 	}
 
 	okCnt := 0
 	errorsCnt := 0
 
-	currentBatch := make([]modelq.Product, 0, batchSize)
+	currentBatch := make([]modelq2.Product, 0, batchSize)
 	for run := true; run; {
 		entry, err := reader.Read()
 		if err == io.EOF {
@@ -82,7 +84,7 @@ func (h *Import) Import(w http.ResponseWriter, r *http.Request) {
 
 		// send batch
 		if len(currentBatch) > 0 && (len(currentBatch) == batchSize || !run) {
-			err := h.sender.Send(modelq.ProductImport{
+			err := h.sender.Send(modelq2.ProductImport{
 				Products: currentBatch,
 			})
 			currentBatch = currentBatch[:0]

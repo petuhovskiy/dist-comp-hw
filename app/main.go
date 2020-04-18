@@ -2,9 +2,12 @@
 package main
 
 import (
-	"app/auth"
 	"app/batchimport"
 	"context"
+	"github.com/sirupsen/logrus"
+	"google.golang.org/grpc"
+	"lib/httputil"
+	"lib/pb"
 	"log"
 	"net/http"
 
@@ -46,8 +49,15 @@ func main() {
 	}
 	defer conn.Close(context.Background())
 
-	// clients
-	authCli := auth.NewClient(conf.AuthAddr)
+	// clients gRPC
+	gconn, err := grpc.Dial(
+		conf.AuthGrpc,
+		grpc.WithInsecure(),
+	)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	authCli := pb.NewAuthClient(gconn)
 
 	// repositories
 	productsRepo := psql.NewProducts(conn)
@@ -63,7 +73,7 @@ func main() {
 
 	// initializing handlers
 	productsV1 := handlers.NewProductsV1(productsService)
-	authMiddleware := handlers.AuthMiddleware(authCli)
+	authMiddleware := httputil.AuthMiddleware(authCli)
 	handler := routers.CreateRouter(productsV1, authMiddleware)
 
 	batchImport := batchimport.NewImportWatcher(conf.AmqpURL, conf.QueueImport, productsRepo)

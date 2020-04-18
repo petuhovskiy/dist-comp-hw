@@ -4,7 +4,7 @@ import (
 	"encoding/csv"
 	"errors"
 	"io"
-	"product-import/modelq"
+	modelq2 "lib/modelq"
 )
 
 var ErrMissingFields = errors.New("not found required fields in csv header")
@@ -53,13 +53,13 @@ func (r *CsvReader) parseHead() bool {
 	return ok1 && ok2 && ok3
 }
 
-func (r *CsvReader) Read() (modelq.Product, error) {
+func (r *CsvReader) Read() (modelq2.Product, error) {
 	arr, err := r.r.Read()
 	if err != nil {
-		return modelq.Product{}, err
+		return modelq2.Product{}, err
 	}
 
-	return modelq.Product{
+	return modelq2.Product{
 		Name:     arr[r.posProductName],
 		Code:     arr[r.posUniqId],
 		Category: arr[r.posAmazonCategory],

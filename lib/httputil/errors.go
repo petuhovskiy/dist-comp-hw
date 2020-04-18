@@ -1,4 +1,4 @@
-package handlers
+package httputil
 
 import (
 	"net/http"
@@ -42,3 +42,15 @@ func ErrInternal(err error) render.Renderer {
 		ErrorText:      err.Error(),
 	}
 }
+
+func ErrRender(err error) render.Renderer {
+	return &ErrResponse{
+		Err:            err,
+		HTTPStatusCode: 422,
+		StatusText:     "Error rendering response.",
+		ErrorText:      err.Error(),
+	}
+}
+
+var ErrNotFound = &ErrResponse{HTTPStatusCode: 404, StatusText: "Resource not found."}
+var ErrUnauthorized = &ErrResponse{HTTPStatusCode: 401, StatusText: "Unauthorized"}

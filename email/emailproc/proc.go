@@ -2,12 +2,12 @@ package emailproc
 
 import (
 	"context"
-	"email/modelq"
 	"email/sendmail"
 	"encoding/json"
 	"errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
+	modelq2 "lib/modelq"
 	"time"
 )
 
@@ -74,7 +74,7 @@ func (p *Processor) connectConsume(ctx context.Context) error {
 		log.WithField("queueName", p.queueName).Info("Accepting messages")
 
 		for msg := range notifyCh {
-			var message modelq.Notification
+			var message modelq2.Notification
 
 			err := json.Unmarshal(msg.Body, &message)
 			if err != nil {
@@ -133,7 +133,7 @@ func (p *Processor) consume(ch *amqp.Channel, queueName string) (<-chan amqp.Del
 	return msgs, nil
 }
 
-func (p *Processor) process(msg modelq.Notification) error {
+func (p *Processor) process(msg modelq2.Notification) error {
 	if msg.Type != emailType {
 		return ErrUnknownType
 	}

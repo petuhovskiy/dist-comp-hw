@@ -217,3 +217,12 @@ func (s *Auth) issueTokens(user modeldb.User) (modelapi.IssuedTokens, error) {
 		RefreshTokenTLL: s.conf.RefreshTokenExpiration,
 	}, nil
 }
+
+func (s *Auth) SetRole(req modelapi.SetRole) (modelapi.SetRole, error) {
+	err := s.usersRepo.UpdateRole(req.UserID, req.Role)
+	if err != nil {
+		return req, err
+	}
+
+	return req, nil
+}

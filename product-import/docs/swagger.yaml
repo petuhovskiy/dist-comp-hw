@@ -24,7 +24,14 @@ paths:
       - text/csv
       responses:
         "200": {}
+      security:
+      - ApiKeyAuth: []
       summary: Import data from csv file
       tags:
       - import
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
