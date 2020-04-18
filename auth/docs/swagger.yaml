@@ -23,6 +23,13 @@ definitions:
       refresh_token:
         type: string
     type: object
+  modelapi.SetRole:
+    properties:
+      role:
+        type: string
+      user_id:
+        type: integer
+    type: object
   modelapi.SigninRequest:
     properties:
       login:
@@ -41,18 +48,6 @@ definitions:
     type: object
   modelapi.SignupResponse:
     properties:
-      user_id:
-        type: integer
-    type: object
-  modelapi.ValidateRequest:
-    properties:
-      access_token:
-        type: string
-    type: object
-  modelapi.ValidateResponse:
-    properties:
-      expire_after:
-        type: string
       user_id:
         type: integer
     type: object
@@ -106,6 +101,29 @@ paths:
       summary: Accepts valid refresh token, returns new refresh and access tokens.
       tags:
       - auth
+  /v1/setrole:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Request
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/modelapi.SetRole'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/modelapi.SetRole'
+      security:
+      - ApiKeyAuth: []
+      summary: Updates role of the user
+      tags:
+      - management
   /v1/signin:
     post:
       consumes:
@@ -148,25 +166,9 @@ paths:
       summary: Sign up (register)
       tags:
       - auth
-  /v1/validate:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: Access token
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/modelapi.ValidateRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/modelapi.ValidateResponse'
-      summary: Validates access token.
-      tags:
-      - auth
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

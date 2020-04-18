@@ -24,8 +24,8 @@ func (r *Products) Migrate() error {
 		context.Background(),
 		`CREATE TABLE IF NOT EXISTS products(
 			id			serial PRIMARY KEY,
-			name		text,
-			code		text,
+			name		text NOT NULL,
+			code		text UNIQUE NOT NULL,
 			category	text
 		)`,
 	)
@@ -116,4 +116,26 @@ func (r *Products) CountAll() (uint, error) {
 	).Scan(&count)
 
 	return count, err
+}
+
+func (r *Products) InsertMany(arr []modeldb.Product) (uint, error) {
+	batch := &pgx.Batch{}
+
+	for _, p := range arr {
+		batch.Queue(
+			`INSERT INTO products(name, code, category) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING`,
+			p.Name,
+			p.Code,
+			p.Category,
+		)
+	}
+
+	br := r.conn.SendBatch(context.Background(), batch)
+	defer br.Close()
+	ct, err := br.Exec()
+	if err != nil {
+		return 0, err
+	}
+
+	return uint(ct.RowsAffected()), nil
 }

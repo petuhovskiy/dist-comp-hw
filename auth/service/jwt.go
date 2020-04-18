@@ -5,12 +5,22 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/cristalhq/jwt"
+	"lib/pb"
 	"time"
 )
 
 const (
-	jwtIssuer  = "auth-server"
+	jwtIssuer = "auth-server"
 )
+
+type Claims struct {
+	jwt.StandardClaims
+	Role pb.AuthRole `json:"role"`
+}
+
+func (u *Claims) MarshalBinary() ([]byte, error) {
+	return json.Marshal(u)
+}
 
 type JWT struct {
 	signer  jwt.Signer
@@ -35,13 +45,16 @@ func (j *JWT) IssueToken(user modeldb.User, ttl time.Duration) (string, error) {
 	now := time.Now()
 	expiresAt := now.Add(ttl)
 
-	token, err := j.builder.Build(&jwt.StandardClaims{
-		Audience:  []string{"user"},
-		ExpiresAt: jwt.Timestamp(expiresAt.Unix()),
-		ID:        id,
-		IssuedAt:  jwt.Timestamp(now.Unix()),
-		Issuer:    jwtIssuer,
-		Subject:   fmt.Sprint(user.ID),
+	token, err := j.builder.Build(&Claims{
+		StandardClaims: jwt.StandardClaims{
+			Audience:  []string{"user"},
+			ExpiresAt: jwt.Timestamp(expiresAt.Unix()),
+			ID:        id,
+			IssuedAt:  jwt.Timestamp(now.Unix()),
+			Issuer:    jwtIssuer,
+			Subject:   fmt.Sprint(user.ID),
+		},
+		Role: user.Role,
 	})
 	if err != nil {
 		return "", err
@@ -50,13 +63,13 @@ func (j *JWT) IssueToken(user modeldb.User, ttl time.Duration) (string, error) {
 	return token.InsecureString(), nil
 }
 
-func (j *JWT) ValidateToken(raw string) (*jwt.StandardClaims, error) {
+func (j *JWT) ValidateToken(raw string) (*Claims, error) {
 	token, err := jwt.ParseAndVerifyString(raw, j.signer)
 	if err != nil {
 		return nil, err
 	}
 
-	claims := &jwt.StandardClaims{}
+	claims := &Claims{}
 	err = json.Unmarshal(token.RawClaims(), claims)
 	if err != nil {
 		return nil, err
@@ -65,7 +78,7 @@ func (j *JWT) ValidateToken(raw string) (*jwt.StandardClaims, error) {
 	validator := jwt.NewValidator(
 		jwt.ExpirationTimeChecker(time.Now()),
 	)
-	err = validator.Validate(claims)
+	err = validator.Validate(&claims.StandardClaims)
 	if err != nil {
 		return nil, err
 	}

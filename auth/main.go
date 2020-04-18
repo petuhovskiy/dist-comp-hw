@@ -2,8 +2,12 @@
 package main
 
 import (
+	"auth/grpcserv"
 	"context"
 	"github.com/cristalhq/jwt"
+	"github.com/sirupsen/logrus"
+	"google.golang.org/grpc"
+	"lib/pb"
 	"log"
 	"net/http"
 
@@ -19,6 +23,10 @@ import (
 // @title Auth API
 // @version 1.0
 // @description This is sample auth server, made as dist-comp homework.
+
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 
 // @contact.name Arthur Petukhovsky
 // @contact.url https://t.me/petuhovskiy
@@ -86,9 +94,31 @@ func main() {
 		conf,
 	)
 
+	// grpc
+	serv := grpcserv.New(
+		conf.Grpc,
+		logrus.StandardLogger(),
+		&grpcserv.Services{
+			Auth: grpcserv.NewAuth(authService),
+		},
+	)
+	go func() {
+		log.Fatal(serv.Listen())
+	}()
+
+	// clients gRPC
+	gconn, err := grpc.Dial(
+		"auth:9090", // TODO: another way
+		grpc.WithInsecure(),
+	)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	authCli := pb.NewAuthClient(gconn)
+
 	// initializing handlers
 	authV1 := handlers.NewAuthV1(authService)
-	handler := routers.CreateRouter(authV1)
+	handler := routers.CreateRouter(authV1, authCli)
 
 	log.Println("Serving at http://localhost" + conf.BindAddr)
 	err = http.ListenAndServe(conf.BindAddr, handler)

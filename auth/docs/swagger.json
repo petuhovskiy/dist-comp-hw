@@ -75,6 +75,44 @@
                 }
             }
         },
+        "/v1/setrole": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "management"
+                ],
+                "summary": "Updates role of the user",
+                "parameters": [
+                    {
+                        "description": "Request",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/modelapi.SetRole"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/modelapi.SetRole"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/signin": {
             "post": {
                 "consumes": [
@@ -140,39 +178,6 @@
                     }
                 }
             }
-        },
-        "/v1/validate": {
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auth"
-                ],
-                "summary": "Validates access token.",
-                "parameters": [
-                    {
-                        "description": "Access token",
-                        "name": "req",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/modelapi.ValidateRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/modelapi.ValidateResponse"
-                        }
-                    }
-                }
-            }
         }
     },
     "definitions": {
@@ -212,6 +217,17 @@
                 }
             }
         },
+        "modelapi.SetRole": {
+            "type": "object",
+            "properties": {
+                "role": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "modelapi.SigninRequest": {
             "type": "object",
             "properties": {
@@ -244,25 +260,13 @@
                     "type": "integer"
                 }
             }
-        },
-        "modelapi.ValidateRequest": {
-            "type": "object",
-            "properties": {
-                "access_token": {
-                    "type": "string"
-                }
-            }
-        },
-        "modelapi.ValidateResponse": {
-            "type": "object",
-            "properties": {
-                "expire_after": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "integer"
-                }
-            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }

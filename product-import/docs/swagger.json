@@ -1,0 +1,56 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is sample product import server, made as dist-comp homework.",
+        "title": "Product Import API",
+        "contact": {
+            "name": "Arthur Petukhovsky",
+            "url": "https://t.me/petuhovskiy",
+            "email": "petuhovskiy@yandex.ru"
+        },
+        "license": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8082",
+    "basePath": "/",
+    "paths": {
+        "/v1/import": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "text/csv"
+                ],
+                "tags": [
+                    "import"
+                ],
+                "summary": "Import data from csv file",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "File with data",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {}
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}

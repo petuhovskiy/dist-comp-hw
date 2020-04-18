@@ -1,0 +1,37 @@
+basePath: /
+host: localhost:8082
+info:
+  contact:
+    email: petuhovskiy@yandex.ru
+    name: Arthur Petukhovsky
+    url: https://t.me/petuhovskiy
+  description: This is sample product import server, made as dist-comp homework.
+  license: {}
+  title: Product Import API
+  version: "1.0"
+paths:
+  /v1/import:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: File with data
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - text/csv
+      responses:
+        "200": {}
+      security:
+      - ApiKeyAuth: []
+      summary: Import data from csv file
+      tags:
+      - import
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

@@ -94,31 +94,6 @@ func (h *Auth) Refresh(w http.ResponseWriter, r *http.Request) {
 	render.Respond(w, r, resp)
 }
 
-// @Summary Validates access token.
-// @Tags auth
-// @Accept  json
-// @Produce  json
-// @Param req body modelapi.ValidateRequest true "Access token"
-// @Success 200 {object} modelapi.ValidateResponse
-// @Router /v1/validate [post]
-func (h *Auth) Validate(w http.ResponseWriter, r *http.Request) {
-	var data modelapi.ValidateRequest
-	if err := render.Decode(r, &data); err != nil {
-		log.Println("failed to read request, err=", err)
-		render.Render(w, r, ErrInvalidRequest(err))
-		return
-	}
-
-	resp, err := h.auth.Validate(data)
-	if err != nil {
-		log.Println("failed to validate, err=", err)
-		render.Render(w, r, ErrInternal(err))
-		return
-	}
-
-	render.Respond(w, r, resp)
-}
-
 // @Summary Confirms user account phone or email.
 // @Tags auth
 // @Produce  json
@@ -131,6 +106,32 @@ func (h *Auth) Confirm(w http.ResponseWriter, r *http.Request) {
 	resp, err := h.auth.Confirm(v)
 	if err != nil {
 		log.Println("failed to confirm, err=", err)
+		render.Render(w, r, ErrInternal(err))
+		return
+	}
+
+	render.Respond(w, r, resp)
+}
+
+// @Summary Updates role of the user
+// @Tags management
+// @Accept  json
+// @Produce  json
+// @Param req body modelapi.SetRole true "Request"
+// @Success 200 {object} modelapi.SetRole
+// @Router /v1/setrole [post]
+// @Security ApiKeyAuth
+func (h *Auth) SetRole(w http.ResponseWriter, r *http.Request) {
+	var data modelapi.SetRole
+	if err := render.Decode(r, &data); err != nil {
+		log.Println("failed to read request, err=", err)
+		render.Render(w, r, ErrInvalidRequest(err))
+		return
+	}
+
+	resp, err := h.auth.SetRole(data)
+	if err != nil {
+		log.Println("failed to refresh, err=", err)
 		render.Render(w, r, ErrInternal(err))
 		return
 	}

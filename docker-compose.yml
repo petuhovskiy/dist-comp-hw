@@ -9,7 +9,11 @@ services:
     restart: unless-stopped
 
   app:
-    build: ./app
+    build:
+      context: ./
+      dockerfile: ./Dockerfile-std
+      args:
+        MOD_NAME: "app"
     ports:
       - 8080:8080
     environment:
@@ -19,6 +23,7 @@ services:
     depends_on:
       - db
       - auth
+      - rabbit
     restart: unless-stopped
 
   authdb:
@@ -30,14 +35,18 @@ services:
     restart: unless-stopped
 
   auth:
-    build: ./auth
+    build:
+      context: ./
+      dockerfile: ./Dockerfile-std
+      args:
+        MOD_NAME: "auth"
     ports:
       - 8081:8081
     environment:
       BIND_ADDR: ":8081"
       POSTGRES_ADDR: "host=authdb port=5432 user=postgres password=DB_PASSWORD_SECURE dbname=postgres sslmode=disable"
-      ACCESS_TOKEN_EXPR: "3m"
-      REFRESH_TOKEN_EXPR: "10m"
+      ACCESS_TOKEN_EXPR: "10m"
+      REFRESH_TOKEN_EXPR: "60m"
       TOKEN_LENGTH: "32"
       JWT_SECRET: "my_awesome_secret"
     depends_on:
@@ -45,7 +54,11 @@ services:
     restart: unless-stopped
 
   sms:
-    build: ./sms
+    build:
+      context: ./
+      dockerfile: ./Dockerfile-std
+      args:
+        MOD_NAME: "sms"
     environment:
       SMS_HOST: "https://sms.ru"
       SMS_API_ID: ${SMS_API_ID}
@@ -55,7 +68,11 @@ services:
       - rabbit
 
   email:
-    build: ./email
+    build:
+      context: ./
+      dockerfile: ./Dockerfile-std
+      args:
+        MOD_NAME: "email"
     environment:
       AMQP_URL: "amqp://guest:guest@rabbit:5672/"
       QUEUE_NAME: "notifications.email"
@@ -67,13 +84,30 @@ services:
     depends_on:
       - rabbit
 
+  product-import:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile-std
+      args:
+        MOD_NAME: "product-import"
+    ports:
+      - 8082:8082
+    environment:
+      BIND_ADDR: ":8082"
+    depends_on:
+      - rabbit
+    restart: unless-stopped
+
   rabbit:
     image: rabbitmq:3-management
     ports:
       - 5672:5672
       - 15672:15672
+    volumes:
+      - "data-rabbit:/var/lib/rabbitmq"
     restart: unless-stopped
 
 volumes:
   data-app:
   data-auth:
+  data-rabbit:
