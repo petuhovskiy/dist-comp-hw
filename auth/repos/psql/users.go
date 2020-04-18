@@ -33,10 +33,18 @@ func (r *Users) Migrate() error {
 }
 
 func (r *Users) Create(p modeldb.User) (modeldb.User, error) {
+	var email, phone interface{}
+	if p.Email != "" {
+		email = p.Email
+	}
+	if p.Phone != "" {
+		phone = p.Phone
+	}
+
 	err := r.conn.QueryRow(
 		context.Background(),
 		`INSERT INTO users(email, phone, password_hash, role) VALUES ($1, $2, $3, $4) RETURNING id, created_at`,
-		p.Email, p.Phone, p.PasswordHash, p.Role,
+		email, phone, p.PasswordHash, p.Role,
 	).Scan(&p.ID, &p.CreatedAt)
 
 	return p, err
