@@ -18,6 +18,13 @@ type Config struct {
 	QueueSms   string `env:"QUEUE_SMS" envDefault:"notifications.sms"`
 	QueueEmail string `env:"QUEUE_EMAIL" envDefault:"notifications.email"`
 	ConfirmUrl string `env:"CONFIRM_URL" envDefault:"http://localhost:8081/v1/confirm?v=%s"`
+
+	Grpc Grpc
+}
+
+type Grpc struct {
+	Bind    string `env:"GRPC_BIND" envDefault:":9090"`
+	Timeout int    `env:"GRPC_TIMEOUT" envDefault:"5"`
 }
 
 func EnvConfig() (*Config, error) {

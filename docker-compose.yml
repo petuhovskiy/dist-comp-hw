@@ -31,7 +31,11 @@ services:
     restart: unless-stopped
 
   auth:
-    build: ./auth
+    build:
+      context: ./
+      dockerfile: ./Dockerfile-std
+      args:
+        MOD_NAME: "auth"
     ports:
       - 8081:8081
     environment:

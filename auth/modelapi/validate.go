@@ -1,6 +1,9 @@
 package modelapi
 
-import "time"
+import (
+	"lib/pb"
+	"time"
+)
 
 // ValidateRequest is used for access_token validation.
 type ValidateRequest struct {
@@ -11,4 +14,5 @@ type ValidateRequest struct {
 type ValidateResponse struct {
 	UserID      uint          `json:"user_id"`
 	ExpireAfter time.Duration `json:"expire_after"`
+	Role        pb.AuthRole
 }

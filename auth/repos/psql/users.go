@@ -24,7 +24,8 @@ func (r *Users) Migrate() error {
 			created_at  	timestamp DEFAULT current_timestamp NOT NULL,
 			email       	text UNIQUE,
 			phone       	text UNIQUE,
-			password_hash 	bytea NOT NULL
+			password_hash 	bytea NOT NULL,
+			role			integer NOT NULL
 		)`,
 	)
 	return err
@@ -33,8 +34,8 @@ func (r *Users) Migrate() error {
 func (r *Users) Create(p modeldb.User) (modeldb.User, error) {
 	err := r.conn.QueryRow(
 		context.Background(),
-		`INSERT INTO users(email, phone, password_hash) VALUES ($1, $2, $3) RETURNING id, created_at`,
-		p.Email, p.Phone, p.PasswordHash,
+		`INSERT INTO users(email, phone, password_hash, role) VALUES ($1, $2, $3, $4) RETURNING id, created_at`,
+		p.Email, p.Phone, p.PasswordHash, p.Role,
 	).Scan(&p.ID, &p.CreatedAt)
 
 	return p, err
@@ -46,11 +47,11 @@ func (r *Users) FindByLogin(login string) (modeldb.User, error) {
 	err := r.conn.QueryRow(
 		context.Background(),
 		`SELECT
-		id, created_at, email, phone, password_hash
+		id, created_at, email, phone, password_hash, role
 		FROM users
 		WHERE email = $1 OR phone = $1`,
 		login,
-	).Scan(&p.ID, &p.CreatedAt, &p.Email, &p.Phone, &p.PasswordHash)
+	).Scan(&p.ID, &p.CreatedAt, &p.Email, &p.Phone, &p.PasswordHash, &p.Role)
 
 	return p, err
 }
@@ -61,11 +62,11 @@ func (r *Users) FindByID(id uint) (modeldb.User, error) {
 	err := r.conn.QueryRow(
 		context.Background(),
 		`SELECT
-		id, created_at, email, login, password_hash
+		id, created_at, email, login, password_hash, role
 		FROM users
 		WHERE id = $1`,
 		id,
-	).Scan(&p.ID, &p.CreatedAt, &p.Email, &p.Phone, &p.PasswordHash)
+	).Scan(&p.ID, &p.CreatedAt, &p.Email, &p.Phone, &p.PasswordHash, &p.Role)
 
 	return p, err
 }

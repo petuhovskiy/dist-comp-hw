@@ -2,8 +2,10 @@
 package main
 
 import (
+	"auth/grpcserv"
 	"context"
 	"github.com/cristalhq/jwt"
+	"github.com/sirupsen/logrus"
 	"log"
 	"net/http"
 
@@ -85,6 +87,18 @@ func main() {
 		jwtService,
 		conf,
 	)
+
+	// grpc
+	serv := grpcserv.New(
+		conf.Grpc,
+		logrus.StandardLogger(),
+		&grpcserv.Services{
+			Auth: grpcserv.NewAuth(authService),
+		},
+	)
+	go func() {
+		log.Fatal(serv.Listen())
+	}()
 
 	// initializing handlers
 	authV1 := handlers.NewAuthV1(authService)

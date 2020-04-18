@@ -1,6 +1,9 @@
 package modeldb
 
-import "time"
+import (
+	"lib/pb"
+	"time"
+)
 
 type User struct {
 	ID           uint
@@ -8,4 +11,5 @@ type User struct {
 	Email        string
 	Phone        string
 	PasswordHash []byte
+	Role         pb.AuthRole
 }

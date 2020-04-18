@@ -7,6 +7,7 @@ import (
 	"auth/repos/psql"
 	"fmt"
 	"golang.org/x/crypto/bcrypt"
+	"lib/pb"
 	"time"
 )
 
@@ -66,6 +67,7 @@ func (s *Auth) Signup(req modelapi.SignupRequest) (modelapi.SignupResponse, erro
 
 	user, err := s.usersRepo.Create(modeldb.User{
 		PasswordHash: hash,
+		Role:         pb.AuthRole_USER,
 	})
 	if err != nil {
 		return modelapi.SignupResponse{}, err
@@ -151,6 +153,7 @@ func (s *Auth) Validate(req modelapi.ValidateRequest) (modelapi.ValidateResponse
 	return modelapi.ValidateResponse{
 		UserID:      userID,
 		ExpireAfter: time.Until(claims.ExpiresAt.Time()),
+		Role:        claims.Role,
 	}, nil
 }
 

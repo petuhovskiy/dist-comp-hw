@@ -1,10 +1,13 @@
 FROM    golang:1.13.8-alpine3.11 AS builder
+ARG     MOD_NAME
+ENV     DIR_NAME=${MOD_NAME}
 RUN     apk update && apk add bash ca-certificates git gcc g++ libc-dev binutils file
-WORKDIR /usr/src/app/
-COPY    go.mod .
-COPY    go.sum .
+WORKDIR /usr/src/app/${DIR_NAME}/
+COPY    ${DIR_NAME}/go.mod .
+COPY    ${DIR_NAME}/go.sum .
+COPY    lib/ ../lib/
 RUN     go mod download
-COPY    . .
+COPY    ${DIR_NAME}/ .
 RUN     go build -o /app .
 
 FROM alpine:3.11 AS production

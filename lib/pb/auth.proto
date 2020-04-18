@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/empty.proto";
+
+service Auth {
+  // Validate validates access token, and returns info about it.
+  rpc Validate (ValidateRequest) returns (ValidateResponse);
+}
+
+enum AuthRole {
+  USER = 0;
+  ADMIN = 1;
+}
+
+message ValidateRequest {
+  // access token given by user
+  string access_token = 1;
+}
+
+message ValidateResponse {
+  // id of a user
+  uint64 user_id = 1;
+
+  // time before expiration
+  google.protobuf.Duration expire_after = 2;
+
+  // role of a user
+  AuthRole role = 3;
+}

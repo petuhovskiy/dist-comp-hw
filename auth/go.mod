@@ -10,8 +10,11 @@ require (
 	github.com/go-chi/render v1.0.1
 	github.com/go-openapi/spec v0.19.7 // indirect
 	github.com/go-openapi/swag v0.19.8 // indirect
+	github.com/grpc-ecosystem/go-grpc-middleware v1.2.0
+	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
 	github.com/jackc/pgx/v4 v4.5.0
 	github.com/mailru/easyjson v0.7.1 // indirect
+	github.com/prometheus/client_golang v1.5.1 // indirect
 	github.com/sirupsen/logrus v1.4.2
 	github.com/streadway/amqp v0.0.0-20200108173154-1c71cc93ed71
 	github.com/swaggo/http-swagger v0.0.0-20200308142732-58ac5e232fba
@@ -19,5 +22,9 @@ require (
 	golang.org/x/crypto v0.0.0-20200320181102-891825fb96df
 	golang.org/x/net v0.0.0-20200320181208-1c781a10960a // indirect
 	golang.org/x/tools v0.0.0-20200319210407-521f4a0cd458 // indirect
+	google.golang.org/grpc v1.28.1
 	gopkg.in/yaml.v2 v2.2.8 // indirect
+	lib v0.0.0-00010101000000-000000000000
 )
+
+replace lib => ../lib

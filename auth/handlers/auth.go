@@ -94,31 +94,6 @@ func (h *Auth) Refresh(w http.ResponseWriter, r *http.Request) {
 	render.Respond(w, r, resp)
 }
 
-// @Summary Validates access token.
-// @Tags auth
-// @Accept  json
-// @Produce  json
-// @Param req body modelapi.ValidateRequest true "Access token"
-// @Success 200 {object} modelapi.ValidateResponse
-// @Router /v1/validate [post]
-func (h *Auth) Validate(w http.ResponseWriter, r *http.Request) {
-	var data modelapi.ValidateRequest
-	if err := render.Decode(r, &data); err != nil {
-		log.Println("failed to read request, err=", err)
-		render.Render(w, r, ErrInvalidRequest(err))
-		return
-	}
-
-	resp, err := h.auth.Validate(data)
-	if err != nil {
-		log.Println("failed to validate, err=", err)
-		render.Render(w, r, ErrInternal(err))
-		return
-	}
-
-	render.Respond(w, r, resp)
-}
-
 // @Summary Confirms user account phone or email.
 // @Tags auth
 // @Produce  json
